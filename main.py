@@ -49,7 +49,7 @@ UPGRADES = [
     {"title": "Master Spinner","desc": "You are now a master in the art of spidget-finning",
      "params": [250,.005,.995,(purple,black,red,royalpurple)]},
     {"title": "Chaos Spinner","desc": "Mentally unstable fidget spidger",
-     "params": [250,[-.1,.1],[.9,1.1],(black,red,red,purple)]},
+     "params": [250,[-.1,.1],[.9,1.09],(black,red,red,purple)]},
     {"title": "Rainbow Spinner","desc": "There's gold at the end of this rainbow",
      "params": [250,.002,.997,(lightlightgrey,[orange,yellow,green],red,[blue,purple,royalpurple])]},
     {"title": "Zero Friction Spinner","desc": "Will spin for as long as you want it to spin",
