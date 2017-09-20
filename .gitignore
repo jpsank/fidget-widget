@@ -1,0 +1,5 @@
+*.xml
+.idea/fidget-widget.iml
+*.p
+__pycache__/main.cpython-35.pyc
+setup.py

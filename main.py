@@ -1,7 +1,8 @@
 import pygame
 import math
-import json
+import pickle
 import os
+import sys
 import random
 
 
@@ -58,9 +59,9 @@ UPGRADES = [
      "params": [300,0.0,1.01,(black,[cyan,green,yellow],red,[cyan,green,yellow])]},
 ]
 
-if not os.path.exists('save.json'):
-    with open('save.json','w') as f:
-        json.dump([0,0],f)
+if not os.path.exists('save.p'):
+    with open('save.p','wb') as f:
+        pickle.dump([0, 0], f)
 
 
 def dist(pos1,pos2):
@@ -118,11 +119,13 @@ class FidgetSpinner(pygame.sprite.Sprite):
     def spin(self):
         self.rot += self.rotAccel
         if self.rot >= 360:
-            self.rotCount += 1
-            self.rot -= 360
+            m = int(self.rot/360)
+            self.rotCount += m
+            self.rot -= 360*m
         elif self.rot <= -360:
-            self.rotCount += 1
-            self.rot += 360
+            m = abs(int(self.rot / 360))
+            self.rotCount += m
+            self.rot += 360 * m
         self.dampen()
 
     def dampen(self):
@@ -159,6 +162,8 @@ class FidgetSpinner(pygame.sprite.Sprite):
 
 pygame.init()
 
+FPS = 60
+
 dispWidth,dispHeight = 800,600
 
 display = pygame.display.set_mode((dispWidth,dispHeight))
@@ -168,8 +173,8 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont("Comic Sans MS", 36)
 smallfont = pygame.font.SysFont("Comic Sans MS", 24)
 
-with open('save.json','r') as f:
-    LEVEL,rotCount = json.load(f)
+with open('save.p','rb') as f:
+    LEVEL,rotCount = pickle.load(f)
 
 fidget = FidgetSpinner(int(dispWidth/2) - (UPGRADES[LEVEL]["params"][0] * 1.2) / 2,
                        int(dispHeight/2) - (UPGRADES[LEVEL]["params"][0] * 1.2) / 2)
@@ -182,16 +187,15 @@ upgradeButton = Button((dispWidth*.25,dispHeight*.9,dispWidth*.5,dispHeight*.1))
 dragStart = False
 dragEnd = False
 
+index = 0
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s:
-                with open('save.json', 'w') as f:
-                    json.dump([LEVEL, fidget.rotCount], f)
-                print('saved')
+            sys.exit()
+    if index%FPS == 0:
+        with open('save.p', 'wb') as f:
+            pickle.dump([LEVEL, fidget.rotCount], f)
 
 
     display.fill(white)
@@ -240,9 +244,8 @@ while True:
                     LEVEL += 1
                     fidget.changeTheme(*UPGRADES[LEVEL]["params"])
 
-                    with open('save.json', 'w') as f:
-                        json.dump([LEVEL,fidget.rotCount], f)
-                    print('saved')
+                    with open('save.p', 'wb') as f:
+                        pickle.dump([LEVEL,fidget.rotCount], f)
                 else:
                     upgradeButton.update("not enough R")
 
@@ -253,5 +256,6 @@ while True:
         pygame.draw.line(display, lightgrey, mousepos, (x, y))
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(FPS)
+    index += 1
 
