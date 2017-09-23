@@ -189,18 +189,31 @@ dragEnd = False
 
 index = 0
 while True:
+    cost = int(5 * (1.4 ** LEVEL))
+
+    mousepos = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == pygame.MOUSEBUTTONUP:
+            if LEVEL < len(UPGRADES) - 1:
+                if upgradeButton.is_overlapping(mousepos):
+                    if fidget.rotCount >= cost:
+                        fidget.rotCount -= cost
+                        LEVEL += 1
+                        fidget.changeTheme(*UPGRADES[LEVEL]["params"])
+
+                        with open('save.p', 'wb') as f:
+                            pickle.dump([LEVEL, fidget.rotCount], f)
+                    else:
+                        upgradeButton.update("not enough R")
     if index%FPS == 0:
         with open('save.p', 'wb') as f:
             pickle.dump([LEVEL, fidget.rotCount], f)
 
-
     display.fill(white)
 
-    mousepos = pygame.mouse.get_pos()
     if pygame.mouse.get_pressed()[0] == 1:
         if fidget.is_overlapping(mousepos):
             if not dragStart:
@@ -234,20 +247,8 @@ while True:
     text = smallfont.render(UPGRADES[LEVEL]["desc"], True, (0, 0, 0))
     display.blit(text, (int(dispWidth / 2 - text.get_width() / 2), int((4.2 * dispHeight / 5) - text.get_height() / 2)))
 
-    if LEVEL < len(UPGRADES)-1:
-        cost = int(5 * (1.4 ** LEVEL))
+    if LEVEL < len(UPGRADES) - 1:
         upgradeButton.update("upgrade %s R" % cost)
-        if pygame.mouse.get_pressed()[0] == 1:
-            if upgradeButton.is_overlapping(mousepos):
-                if fidget.rotCount >= cost:
-                    fidget.rotCount -= cost
-                    LEVEL += 1
-                    fidget.changeTheme(*UPGRADES[LEVEL]["params"])
-
-                    with open('save.p', 'wb') as f:
-                        pickle.dump([LEVEL,fidget.rotCount], f)
-                else:
-                    upgradeButton.update("not enough R")
 
     width,height = fidget.rect.width,fidget.rect.height
     for i in range(0, 360, 120):
