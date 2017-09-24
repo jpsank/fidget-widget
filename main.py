@@ -206,8 +206,6 @@ while True:
 
                         with open('save.p', 'wb') as f:
                             pickle.dump([LEVEL, fidget.rotCount], f)
-                    else:
-                        upgradeButton.update("not enough R")
     if index%FPS == 0:
         with open('save.p', 'wb') as f:
             pickle.dump([LEVEL, fidget.rotCount], f)
@@ -248,7 +246,13 @@ while True:
     display.blit(text, (int(dispWidth / 2 - text.get_width() / 2), int((4.2 * dispHeight / 5) - text.get_height() / 2)))
 
     if LEVEL < len(UPGRADES) - 1:
-        upgradeButton.update("upgrade %s R" % cost)
+        if pygame.mouse.get_pressed()[0] == 1 and upgradeButton.is_overlapping(mousepos):
+            if not fidget.rotCount >= cost:
+                upgradeButton.update("not enough R")
+            else:
+                upgradeButton.update("release to upgrade for %s R" % cost)
+        else:
+            upgradeButton.update("upgrade %s R" % cost)
 
     width,height = fidget.rect.width,fidget.rect.height
     for i in range(0, 360, 120):
