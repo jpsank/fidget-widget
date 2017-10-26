@@ -2,6 +2,11 @@
 Virtual fidget spinner upgrade game in Pygame
 
 ## Usage
+Instructions:
+ - Drag and release the fidget spinner to spin
+ - Get rotations to buy new fidget spinners
+ - Become the best fidget spinner spinner
+
 To start the game type this
 
     python main.py
